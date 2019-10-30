@@ -3,6 +3,7 @@ package com.yessumtorah.brandeetsapp;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,7 +18,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String BASE_URL = "";
+    private static final String BASE_URL = "https://brandeets.herokuapp.com";
+    private static final String TAG = "MAIN_ACTIVITY";
     private Retrofit retrofit;
     private RetrofitInterface retrofitInterface;
 
@@ -68,6 +70,9 @@ public class MainActivity extends AppCompatActivity {
                 map.put("email", emailEdit.getText().toString());
                 map.put("password", pwdEdit.getText().toString());
 
+                Log.d(TAG, "email entered: " + map.get("email"));
+                Log.d(TAG, "Password entered: " + map.get("password"));
+
                 Call<Void> call = retrofitInterface.executeSignup(map);
                 call.enqueue(new Callback<Void>() {
                     @Override
@@ -75,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                         if (response.code() == 200) {
                             Toast.makeText(MainActivity.this, "Signed Up Successfully",
                                     Toast.LENGTH_LONG).show();
-                        } else if (response.code() == 400) {
+                        } else if (response.code() == 401) {
                             Toast.makeText(MainActivity.this, "Already Registered",
                                     Toast.LENGTH_LONG).show();
                         }
@@ -118,10 +123,15 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<LoginInstance> call, Response<LoginInstance> response) {
                         if (response.code() == 200) {
-
                             LoginInstance result = response.body();
                             String JWT = response.headers().get("Auth");
-                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this)
+                            Log.d(TAG, JWT);
+                            Toast.makeText(MainActivity.this, "Login Successful", Toast.LENGTH_LONG).show();
+                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                            builder.setTitle(result.getEmail());
+                        } else if (response.code() == 401) {
+                            // Credentials are worng
+                            Toast.makeText(MainActivity.this, "Wrong Credentials", Toast.LENGTH_LONG).show();
                         }
                     }
 
