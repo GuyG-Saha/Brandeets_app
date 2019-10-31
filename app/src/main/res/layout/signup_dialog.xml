@@ -17,6 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:hint="Enter Password"
+        android:inputType="textPassword"
         android:id="@+id/pwdEdit"/>
     
     <Button

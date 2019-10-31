@@ -7,7 +7,21 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.gson.JsonArray;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 
@@ -22,11 +36,16 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MAIN_ACTIVITY";
     private Retrofit retrofit;
     private RetrofitInterface retrofitInterface;
+    private TextView mTextViewResult;
+    private RequestQueue mQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ProgressBar progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.INVISIBLE);
 
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -34,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         retrofitInterface = retrofit.create(RetrofitInterface.class);
+        mTextViewResult = findViewById(R.id.text_view_result);
+        mQueue = Volley.newRequestQueue(this);
 
         findViewById(R.id.login).setOnClickListener(new View.OnClickListener() {
 
@@ -50,6 +71,48 @@ public class MainActivity extends AppCompatActivity {
                 handleSignUpDialog();
             }
         });
+
+        findViewById(R.id.brands).setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                parseBrands();
+            }
+        });
+
+    }
+
+    private void parseBrands() {
+       // String url = BASE_URL + "/brands";
+        String url = "https://api.myjson.com/bins/18vhys";
+
+        // The Following should be changed to JsonArrayRequest according to my URL
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                new com.android.volley.Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray jsonArray = response.getJSONArray("brands");
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject brand = jsonArray.getJSONObject(i);
+
+                                String ext = brand.getString("ext");
+                                String name = brand.getString("name");
+                                String price = brand.getString("price");
+
+                                mTextViewResult.append(name + "." + ext + " " + price + " /n");
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+              }
+            });
+            mQueue.add(request);
     }
 
     private void handleSignUpDialog() {
@@ -112,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 HashMap<String, String> map = new HashMap<>();
 
                 map.put("email", emailEdit.getText().toString());

@@ -11,7 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="Log in"></Button>
+        android:text="Log in">
+    </Button>
 
     <Button
         android:layout_width="wrap_content"
@@ -21,5 +22,31 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/login">
     </Button>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/login"
+        android:layout_marginBottom="60dp" />
+
+    <Button
+        android:id="@+id/brands"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/signup"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="61dp"
+        android:text="SEE OUR BRANDS" />
+
+    <TextView
+        android:id="@+id/text_view_result"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/brands"
+        android:textSize="15sp"
+        android:textColor="@android:color/black"
+        />
 
 </RelativeLayout>
