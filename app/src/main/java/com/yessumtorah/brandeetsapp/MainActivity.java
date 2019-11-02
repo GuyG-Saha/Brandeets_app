@@ -83,24 +83,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void parseBrands() {
-       // String url = BASE_URL + "/brands";
-        String url = "https://api.myjson.com/bins/18vhys";
+        String url = BASE_URL + "/brands";
+       // String url = "https://api.myjson.com/bins/18vhys";
 
         // The Following should be changed to JsonArrayRequest according to my URL
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
-                new com.android.volley.Response.Listener<JSONObject>() {
+        JsonArrayRequest request = new JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null,
+                new com.android.volley.Response.Listener<JSONArray>() {
                     @Override
-                    public void onResponse(JSONObject response) {
+                    public void onResponse(JSONArray response) {
+                        Log.d(TAG, "JSONArray length is: " + response.length());
                         try {
-                            JSONArray jsonArray = response.getJSONArray("brands");
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject brand = jsonArray.getJSONObject(i);
-
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject brand = response.getJSONObject(i);
                                 String ext = brand.getString("ext");
                                 String name = brand.getString("name");
                                 String price = brand.getString("price");
-
-                                mTextViewResult.append(name + "." + ext + " " + price + " /n");
+                                mTextViewResult.append(name + '.' + ext + " price: " + price + " \n");
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -110,8 +111,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
-              }
-            });
+            }
+        });
             mQueue.add(request);
     }
 
