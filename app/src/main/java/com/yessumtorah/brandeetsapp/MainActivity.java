@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private Retrofit retrofit;
     private RetrofitInterface retrofitInterface;
     private TextView mTextViewResult;
+    private ProgressBar progressBar;
     private RequestQueue mQueue;
 
     @Override
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ProgressBar progressBar = findViewById(R.id.progressBar);
+        progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.INVISIBLE);
 
         retrofit = new Retrofit.Builder()
@@ -84,9 +85,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void parseBrands() {
         String url = BASE_URL + "/brands";
-       // String url = "https://api.myjson.com/bins/18vhys";
+        progressBar.setVisibility(View.VISIBLE);
 
-        // The Following should be changed to JsonArrayRequest according to my URL
         JsonArrayRequest request = new JsonArrayRequest(
                 Request.Method.GET,
                 url,
@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONArray response) {
                         Log.d(TAG, "JSONArray length is: " + response.length());
+                        progressBar.setVisibility(View.INVISIBLE);
                         try {
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject brand = response.getJSONObject(i);
