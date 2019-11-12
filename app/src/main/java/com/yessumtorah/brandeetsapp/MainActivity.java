@@ -1,5 +1,6 @@
 package com.yessumtorah.brandeetsapp;
 
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,17 +12,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.gson.JsonArray;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 
@@ -77,14 +69,18 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                parseBrands();
+                gotoBrandsActivity();
             }
         });
 
     }
 
-    private void parseBrands() {
-        String url = BASE_URL + "/brands";
+    private void gotoBrandsActivity() {
+        Intent intent = new Intent(this, BrandeetsActivity.class);
+        intent.putExtra("BASE_URL", BASE_URL);
+
+        startActivity(intent);
+        /*String url = BASE_URL + "/brands";
         progressBar.setVisibility(View.VISIBLE);
 
         JsonArrayRequest request = new JsonArrayRequest(
@@ -114,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 error.printStackTrace();
             }
         });
-            mQueue.add(request);
+            mQueue.add(request);*/
     }
 
     private void handleSignUpDialog() {

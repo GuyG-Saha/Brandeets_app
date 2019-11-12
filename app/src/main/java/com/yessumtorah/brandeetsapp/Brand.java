@@ -17,7 +17,7 @@ public class Brand {
     private String name;
     @SerializedName("price")
     @Expose
-    private double price;
+    private String price;
     @SerializedName("buyLink")
     @Expose
     private String buyLink;
@@ -34,9 +34,15 @@ public class Brand {
     @Expose
     private ArrayList<String> infos;
 
-    public Brand(String name, String ext) {
+    public Brand(String name, String ext, String price) {
         this.name = name;
         this.ext = ext;
+        this.price = price;
+    }
+
+    public Brand(String name, String price) {
+        this.name = name;
+        this.price = price;
     }
 
     public String getId() {
@@ -59,11 +65,11 @@ public class Brand {
         this.name = name;
     }
 
-    public double getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 
@@ -105,5 +111,9 @@ public class Brand {
 
     public void setInfos(ArrayList<String> infos) {
         this.infos = infos;
+    }
+
+    public String toString() {
+        return this.name + '.' + this.ext + " price: " + this.price;
     }
 }
