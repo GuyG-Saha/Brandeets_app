@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Brandeets App</string>
     <string name="title_activity_brands">BrandsActivity</string>
+    <string name="title_activity_brandeets">BrandeetsActivity</string>
 </resources>
