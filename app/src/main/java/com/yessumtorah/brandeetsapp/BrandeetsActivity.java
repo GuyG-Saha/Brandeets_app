@@ -4,12 +4,14 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -30,6 +32,7 @@ public class BrandeetsActivity extends AppCompatActivity {
     private ArrayList<Brand> mBrandsList;
     private RequestQueue mRequestQueue;
     private ProgressBar progressBar;
+    private String Auth = "";
     private final String TAG = "BrandeetsActivity";
 
     @Override
@@ -39,12 +42,28 @@ public class BrandeetsActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            for (String key : bundle.keySet()) {
+                Log.i(TAG, key + " : " + (bundle.get(key) != null ? bundle.get(key) : "NULL"));
+                if (key.equals("JWT"))
+                    setAuth(bundle.get(key).toString());
+            }
+        } else
+            Log.i(TAG, "no extras arrived");
+
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Please log-in in order to upload new Brandeet", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Log.d(TAG, Auth);
+                if (Auth.equals("Bearer ")) {
+                    Snackbar.make(view, "Please log-in in order to upload new Brandeet", Snackbar.LENGTH_SHORT)
+                            .setAction("Action", null).show();
+                } else if (Auth.length() > "Bearer ".length()) {
+                    Snackbar.make(view, "Redirecting to new activity...", Snackbar.LENGTH_SHORT)
+                            .setAction("Action", null).show();
+                }
             }
         });
         progressBar = findViewById(R.id.progressBar);
@@ -57,13 +76,12 @@ public class BrandeetsActivity extends AppCompatActivity {
         mBrandsList = new ArrayList<>();
 
         mRequestQueue = Volley.newRequestQueue(this);
-
-        parseJSON();
+        String URL = bundle.get("BASE_URL").toString().concat("/brands");
+        Log.i(TAG, URL);
+        parseJSON(URL);
     }
 
-    private void parseJSON() {
-
-        String URL = "http://brandeets.herokuapp.com/brands";
+    private void parseJSON(String URL) {
 
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
                 URL,
@@ -85,6 +103,8 @@ public class BrandeetsActivity extends AppCompatActivity {
                             }
                             mBrandsAdapter = new BrandeetsAdapter(BrandeetsActivity.this, mBrandsList);
                             mRecyclerView.setAdapter(mBrandsAdapter);
+
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -97,7 +117,12 @@ public class BrandeetsActivity extends AppCompatActivity {
         });
 
         mRequestQueue.add(request);
-    }
+
+   }
+
+   public void setAuth(String JWT) {
+        Auth = JWT;
+   }
 
 
 }

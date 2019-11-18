@@ -3,11 +3,13 @@ package com.yessumtorah.brandeetsapp;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -16,10 +18,19 @@ import java.util.ArrayList;
 public class BrandeetsAdapter extends RecyclerView.Adapter<BrandeetsAdapter.BrandsViewHolder> {
     private Context mContext;
     private ArrayList<Brand> mBrandsList;
+    private OnItemClickListener listener;
+    private static final String TAG = "BrandeetsAdapter";
+    private BrandeetsActivity mBrandeetsActivity;
 
     public BrandeetsAdapter(Context context, ArrayList<Brand> brandsList) {
         mContext = context;
         mBrandsList = brandsList;
+    }
+
+    public BrandeetsAdapter(Context context, ArrayList<Brand> brandsList, OnItemClickListener listener) {
+        mContext = context;
+        mBrandsList = brandsList;
+        this.listener = listener;
     }
 
 
@@ -33,7 +44,7 @@ public class BrandeetsAdapter extends RecyclerView.Adapter<BrandeetsAdapter.Bran
 
     @Override
     public void onBindViewHolder(@NonNull BrandsViewHolder holder, int position) {
-        Brand currentItem = mBrandsList.get(position);
+        final Brand currentItem = mBrandsList.get(position);
 
         String logoSrc = currentItem.getLogoSrc();
         String ext = currentItem.getExt();
@@ -42,6 +53,22 @@ public class BrandeetsAdapter extends RecyclerView.Adapter<BrandeetsAdapter.Bran
 
         holder.mTextViewBrandName.setText(name + '.' + ext);
         holder.mTextViewPrice.setText("Price: " + price);
+
+        holder.mImageView.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, currentItem.toString());
+            }
+        });
+
+        holder.mTextViewBrandName.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, currentItem.getName());
+            }
+        });
 
         //Picasso.with(mContext).load(imageUrl).fit().centerInside().into(holder.mImageView);
 
@@ -52,7 +79,10 @@ public class BrandeetsAdapter extends RecyclerView.Adapter<BrandeetsAdapter.Bran
         return mBrandsList.size();
     }
 
+
+
     public class BrandsViewHolder extends RecyclerView.ViewHolder {
+     //   private final ItemBinding binding;
         public ImageView mImageView;
         public TextView mTextViewBrandName;
         public TextView mTextViewPrice;
@@ -64,4 +94,6 @@ public class BrandeetsAdapter extends RecyclerView.Adapter<BrandeetsAdapter.Bran
             mTextViewPrice = itemView.findViewById(R.id.price);
         }
     }
+
+
 }

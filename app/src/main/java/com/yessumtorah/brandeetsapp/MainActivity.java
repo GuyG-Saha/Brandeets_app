@@ -26,11 +26,21 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity {
     private static final String BASE_URL = "https://brandeets.herokuapp.com";
     private static final String TAG = "MAIN_ACTIVITY";
+    private static final String BEARER = "Bearer ";
+    private static String JWT = BEARER;
     private Retrofit retrofit;
     private RetrofitInterface retrofitInterface;
     private TextView mTextViewResult;
     private ProgressBar progressBar;
     private RequestQueue mQueue;
+
+    public static String getJWT() {
+        return JWT;
+    }
+
+    public static void setJWT(String JWT) {
+        MainActivity.JWT += JWT;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,39 +88,10 @@ public class MainActivity extends AppCompatActivity {
     private void gotoBrandsActivity() {
         Intent intent = new Intent(this, BrandeetsActivity.class);
         intent.putExtra("BASE_URL", BASE_URL);
+        intent.putExtra("JWT", JWT);
 
         startActivity(intent);
-        /*String url = BASE_URL + "/brands";
-        progressBar.setVisibility(View.VISIBLE);
 
-        JsonArrayRequest request = new JsonArrayRequest(
-                Request.Method.GET,
-                url,
-                null,
-                new com.android.volley.Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        Log.d(TAG, "JSONArray length is: " + response.length());
-                        progressBar.setVisibility(View.INVISIBLE);
-                        try {
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject brand = response.getJSONObject(i);
-                                String ext = brand.getString("ext");
-                                String name = brand.getString("name");
-                                String price = brand.getString("price");
-                                mTextViewResult.append(name + '.' + ext + " price: " + price + " \n");
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new com.android.volley.Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-            }
-        });
-            mQueue.add(request);*/
     }
 
     private void handleSignUpDialog() {
@@ -186,13 +167,12 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(Call<LoginInstance> call, Response<LoginInstance> response) {
                         if (response.code() == 200) {
                             LoginInstance result = response.body();
-                            String JWT = response.headers().get("Auth");
+                            setJWT(response.headers().get("Auth"));
                             Log.d(TAG, JWT);
-                            Toast.makeText(MainActivity.this, "Login Successful", Toast.LENGTH_LONG).show();
-                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                            builder.setTitle(result.getEmail());
+                            Toast.makeText(MainActivity.this, "Login Successful. you can now add or modify brands", Toast.LENGTH_LONG).show();
+                            //AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                            //builder.setTitle(result.getEmail());
                         } else if (response.code() == 401) {
-                            // Credentials are worng
                             Toast.makeText(MainActivity.this, "Wrong Credentials", Toast.LENGTH_LONG).show();
                         }
                     }
