@@ -1,5 +1,6 @@
 package com.yessumtorah.brandeetsapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -33,6 +34,7 @@ public class BrandeetsActivity extends AppCompatActivity {
     private RequestQueue mRequestQueue;
     private ProgressBar progressBar;
     private String Auth = "";
+    private boolean userLoggedIn;
     private final String TAG = "BrandeetsActivity";
 
     @Override
@@ -48,6 +50,9 @@ public class BrandeetsActivity extends AppCompatActivity {
                 Log.i(TAG, key + " : " + (bundle.get(key) != null ? bundle.get(key) : "NULL"));
                 if (key.equals("JWT"))
                     setAuth(bundle.get(key).toString());
+                if (key.equals("userLoggedIn"))
+                    setUserLoggedIn((boolean)bundle.get(key));
+
             }
         } else
             Log.i(TAG, "no extras arrived");
@@ -57,12 +62,13 @@ public class BrandeetsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, Auth);
-                if (Auth.equals("Bearer ")) {
+                if (!userLoggedIn) {
                     Snackbar.make(view, "Please log-in in order to upload new Brandeet", Snackbar.LENGTH_SHORT)
                             .setAction("Action", null).show();
-                } else if (Auth.length() > "Bearer ".length()) {
+                } else {
                     Snackbar.make(view, "Redirecting to new activity...", Snackbar.LENGTH_SHORT)
                             .setAction("Action", null).show();
+                    goToUploadActiviy();
                 }
             }
         });
@@ -79,6 +85,12 @@ public class BrandeetsActivity extends AppCompatActivity {
         String URL = bundle.get("BASE_URL").toString().concat("/brands");
         Log.i(TAG, URL);
         parseJSON(URL);
+    }
+
+    private void goToUploadActiviy() {
+        Intent intent = new Intent(this, uploadBrandActivity.class);
+
+        startActivity(intent);
     }
 
     private void parseJSON(String URL) {
@@ -125,4 +137,11 @@ public class BrandeetsActivity extends AppCompatActivity {
    }
 
 
+    public boolean isUserLoggedIn() {
+        return userLoggedIn;
+    }
+
+    public void setUserLoggedIn(boolean userLoggedIn) {
+        this.userLoggedIn = userLoggedIn;
+    }
 }

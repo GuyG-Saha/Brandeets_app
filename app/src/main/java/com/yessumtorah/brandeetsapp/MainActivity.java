@@ -30,9 +30,9 @@ public class MainActivity extends AppCompatActivity {
     private static String JWT = BEARER;
     private Retrofit retrofit;
     private RetrofitInterface retrofitInterface;
-    private TextView mTextViewResult;
     private ProgressBar progressBar;
     private RequestQueue mQueue;
+    private boolean userLoggedIn = false;
 
     public static String getJWT() {
         return JWT;
@@ -56,7 +56,6 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         retrofitInterface = retrofit.create(RetrofitInterface.class);
-        mTextViewResult = findViewById(R.id.text_view_result);
         mQueue = Volley.newRequestQueue(this);
 
         findViewById(R.id.login).setOnClickListener(new View.OnClickListener() {
@@ -89,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, BrandeetsActivity.class);
         intent.putExtra("BASE_URL", BASE_URL);
         intent.putExtra("JWT", JWT);
+        intent.putExtra("userLoggedIn", userLoggedIn);
 
         startActivity(intent);
 
@@ -168,12 +168,14 @@ public class MainActivity extends AppCompatActivity {
                         if (response.code() == 200) {
                             LoginInstance result = response.body();
                             setJWT(response.headers().get("Auth"));
+                            setUserLoggedIn(true);
                             Log.d(TAG, JWT);
                             Toast.makeText(MainActivity.this, "Login Successful. you can now add or modify brands", Toast.LENGTH_LONG).show();
-                            //AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                            //builder.setTitle(result.getEmail());
+                            gotoBrandsActivity();
                         } else if (response.code() == 401) {
                             Toast.makeText(MainActivity.this, "Wrong Credentials", Toast.LENGTH_LONG).show();
+                        } else if (response.code() >= 500 && response.code() <= 599) {
+                            Toast.makeText(MainActivity.this, "Server Error", Toast.LENGTH_LONG).show();
                         }
                     }
 
@@ -186,5 +188,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public boolean isUserLoggedIn() {
+        return userLoggedIn;
+    }
+
+    public void setUserLoggedIn(boolean userLoggedIn) {
+        this.userLoggedIn = userLoggedIn;
     }
 }

@@ -13,9 +13,13 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".uploadBrandActivity"
+            android:label="@string/title_activity_upload_brand"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
             android:name=".BrandeetsActivity"
             android:label="@string/title_activity_brandeets"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
